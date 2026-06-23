@@ -22,6 +22,7 @@ export function CardNews({ briefing }: CardNewsProps) {
   const generatedLabel = formatKstDateTime(new Date(briefing.generatedAt));
   const newsCount = briefing.topNews.length;
   const kboCount = briefing.kboResults.length;
+  const scheduleCount = briefing.kboSchedule.length;
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
@@ -177,6 +178,48 @@ export function CardNews({ briefing }: CardNewsProps) {
           ))
         )}
 
+        {/* 금일 예정 경기 */}
+        <SectionLabel emoji="📅" title="금일 예정 경기" />
+
+        {scheduleCount === 0 ? (
+          <article className="card-news col-span-full rounded-3xl bg-gradient-to-br from-slate-600 to-slate-800 p-7 text-center text-white shadow-xl">
+            <p className="text-4xl">📅</p>
+            <p className="mt-3 font-medium text-slate-300">
+              오늘 예정된 KBO 경기가 없습니다.
+            </p>
+          </article>
+        ) : (
+          briefing.kboSchedule.map((game, index) => (
+            <article
+              key={`schedule-${game.homeTeam}-${game.awayTeam}-${index}`}
+              className={`card-news overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-700 via-blue-600 to-cyan-600 p-6 text-white shadow-xl ${spanClass(index, scheduleCount)}`}
+            >
+              <div className="flex items-center justify-between gap-2">
+                <p className="text-xs font-semibold tracking-widest text-blue-100 uppercase">
+                  Today&apos;s Game
+                </p>
+                <span className="rounded-full bg-white/20 px-3 py-1 text-sm font-bold backdrop-blur-sm">
+                  {game.startTime}
+                </span>
+              </div>
+              <div className="mt-5 flex items-center justify-between gap-3">
+                <ScheduledTeamBlock name={game.awayTeam} label="원정" />
+                <span className="text-xl font-black text-white/60">VS</span>
+                <ScheduledTeamBlock
+                  name={game.homeTeam}
+                  label="홈"
+                  align="right"
+                />
+              </div>
+              {game.stadium && (
+                <p className="mt-4 text-center text-sm text-blue-100">
+                  📍 {game.stadium}
+                </p>
+              )}
+            </article>
+          ))
+        )}
+
         {/* 푸터 카드 */}
         <article className="card-news col-span-full rounded-3xl border border-slate-200 bg-white p-6 text-center shadow-lg">
           <p className="text-sm text-slate-500">
@@ -210,6 +253,22 @@ function SectionLabel({ emoji, title }: { emoji: string; title: string }) {
   );
 }
 
+function ScheduledTeamBlock({
+  name,
+  label,
+  align = "left",
+}: {
+  name: string;
+  label: string;
+  align?: "left" | "right";
+}) {
+  return (
+    <div className={`min-w-0 flex-1 ${align === "right" ? "text-right" : "text-left"}`}>
+      <p className="text-xs font-medium text-blue-200">{label}</p>
+      <p className="mt-1 truncate text-lg font-bold md:text-xl">{name}</p>
+    </div>
+  );
+}
 function TeamBlock({
   name,
   score,

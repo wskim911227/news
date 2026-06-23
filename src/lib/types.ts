@@ -30,10 +30,18 @@ export interface KboGame {
   result: string;
 }
 
+export interface KboScheduledGame {
+  homeTeam: string;
+  awayTeam: string;
+  startTime: string;
+  stadium?: string;
+}
+
 export interface DailyBriefing {
   date: string;
   generatedAt: string;
   topNews: NewsItem[];
   weather: WeatherInfo;
   kboResults: KboGame[];
+  kboSchedule: KboScheduledGame[];
 }
