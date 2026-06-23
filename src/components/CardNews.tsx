@@ -189,7 +189,11 @@ export function CardNews({ briefing }: CardNewsProps) {
             </p>
           </article>
         ) : (
-          briefing.kboSchedule.map((game, index) => (
+          <>
+            <p className="col-span-full px-1 text-sm text-slate-500">
+              총 {scheduleCount}경기
+            </p>
+            {briefing.kboSchedule.map((game, index) => (
             <article
               key={`schedule-${game.homeTeam}-${game.awayTeam}-${index}`}
               className={`card-news overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-700 via-blue-600 to-cyan-600 p-6 text-white shadow-xl ${spanClass(index, scheduleCount)}`}
@@ -217,7 +221,8 @@ export function CardNews({ briefing }: CardNewsProps) {
                 </p>
               )}
             </article>
-          ))
+            ))}
+          </>
         )}
 
         {/* 푸터 카드 */}
