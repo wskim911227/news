@@ -30,6 +30,9 @@ npm run dev
 
 ### 1. GitHub에 푸시 후 Vercel 연결
 
+> **중요:** Vercel 프로젝트 설정에서 Framework Preset이 **Next.js**인지 확인하세요.  
+> Output Directory를 `public`으로 수동 설정하면 배포 오류가 납니다. (비워두거나 기본값 사용)
+
 ### 2. 환경변수 등록 (Vercel Dashboard → Settings → Environment Variables)
 
 | 변수명 | 설명 |
