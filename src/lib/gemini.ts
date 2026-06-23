@@ -16,7 +16,7 @@ function buildPrompt(): string {
 
 수집 항목:
 1. 어제(${yesterday}) 한국에서 가장 화제가 됐던 뉴스 TOP 5 — 실제 기사 원문 URL 필수(뉴스 포털·언론사 링크)
-2. 오늘(${today}) 대한민국 서울 기준 날씨
+2. 오늘(${today}) 대한민국 서울 기준 날씨 — 현재 날씨 + 06:00~21:00 시간대별(3시간 간격) 예보
 3. 어제(${yesterday}) KBO 프로야구 경기 결과(경기가 없으면 빈 배열)
 
 JSON 스키마:
@@ -35,7 +35,21 @@ JSON 스키마:
     "temperature": "현재기온(예: 18°C)",
     "high": "최고기온",
     "low": "최저기온",
-    "tip": "오늘 하루 한 줄 조언"
+    "tip": "오늘 하루 한 줄 조언",
+    "hourly": [
+      {
+        "time": "06:00",
+        "condition": "맑음",
+        "temperature": "15°C",
+        "precipitation": "0%"
+      },
+      {
+        "time": "09:00",
+        "condition": "구름많음",
+        "temperature": "18°C",
+        "precipitation": "10%"
+      }
+    ]
   },
   "kboResults": [
     {
@@ -51,6 +65,8 @@ JSON 스키마:
 규칙:
 - topNews는 정확히 5개, rank 1~5
 - url은 반드시 실제 접근 가능한 기사 원문 링크
+- weather.hourly는 06:00, 09:00, 12:00, 15:00, 18:00, 21:00 총 6개 시간대
+- hourly.time은 "HH:00" 형식, precipitation은 강수확률(예: "20%")
 - 한국어로 작성
 - JSON 외 다른 텍스트 금지`;
 }
@@ -100,13 +116,14 @@ export async function generateBriefing(): Promise<DailyBriefing> {
     date: formatKstDate(now),
     generatedAt: now.toISOString(),
     topNews: parsed.topNews ?? [],
-    weather: parsed.weather ?? {
-      location: "서울",
-      condition: "-",
-      temperature: "-",
-      high: "-",
-      low: "-",
-      tip: "날씨 정보를 불러오지 못했습니다.",
+    weather: {
+      location: parsed.weather?.location ?? "서울",
+      condition: parsed.weather?.condition ?? "-",
+      temperature: parsed.weather?.temperature ?? "-",
+      high: parsed.weather?.high ?? "-",
+      low: parsed.weather?.low ?? "-",
+      tip: parsed.weather?.tip ?? "날씨 정보를 불러오지 못했습니다.",
+      hourly: parsed.weather?.hourly ?? [],
     },
     kboResults: parsed.kboResults ?? [],
   };

@@ -78,11 +78,11 @@ export function CardNews({ briefing }: CardNewsProps) {
         ))}
 
         {/* 섹션: 날씨 */}
-        <SectionLabel emoji="🌤️" title="오늘의 날씨" />
+        <SectionLabel emoji="🌤️" title="오늘의 시간대별 날씨" />
 
         <article className="card-news overflow-hidden rounded-3xl bg-gradient-to-br from-sky-400 via-blue-500 to-indigo-600 p-6 text-white shadow-xl md:col-span-2">
-          <div className="md:flex md:items-center md:justify-between md:gap-8">
-            <div className="md:flex-1">
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <div>
               <p className="text-sm font-medium text-sky-100">
                 {briefing.weather.location}
               </p>
@@ -94,19 +94,52 @@ export function CardNews({ briefing }: CardNewsProps) {
                   {briefing.weather.condition}
                 </p>
               </div>
-              <div className="mt-4 flex gap-3 text-sm">
-                <span className="rounded-lg bg-white/20 px-3 py-1.5 backdrop-blur-sm">
-                  최고 {briefing.weather.high}
-                </span>
-                <span className="rounded-lg bg-white/20 px-3 py-1.5 backdrop-blur-sm">
-                  최저 {briefing.weather.low}
-                </span>
+            </div>
+            <div className="flex gap-3 text-sm">
+              <span className="rounded-lg bg-white/20 px-3 py-1.5 backdrop-blur-sm">
+                최고 {briefing.weather.high}
+              </span>
+              <span className="rounded-lg bg-white/20 px-3 py-1.5 backdrop-blur-sm">
+                최저 {briefing.weather.low}
+              </span>
+            </div>
+          </div>
+
+          {briefing.weather.hourly.length > 0 && (
+            <div className="mt-6">
+              <p className="mb-3 text-xs font-semibold tracking-wider text-sky-100 uppercase">
+                시간대별 예보
+              </p>
+              <div className="flex gap-3 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                {briefing.weather.hourly.map((slot) => (
+                  <div
+                    key={slot.time}
+                    className="flex min-w-[88px] shrink-0 flex-col items-center rounded-2xl bg-white/15 px-3 py-4 backdrop-blur-sm"
+                  >
+                    <p className="text-xs font-semibold text-sky-100">
+                      {slot.time}
+                    </p>
+                    <p className="mt-2 text-2xl leading-none">
+                      {weatherEmoji(slot.condition)}
+                    </p>
+                    <p className="mt-2 text-sm font-bold">{slot.temperature}</p>
+                    <p className="mt-1 text-center text-xs text-white/80">
+                      {slot.condition}
+                    </p>
+                    {slot.precipitation && (
+                      <p className="mt-1 text-xs text-sky-100">
+                        💧 {slot.precipitation}
+                      </p>
+                    )}
+                  </div>
+                ))}
               </div>
             </div>
-            <p className="mt-5 rounded-2xl bg-white/15 p-4 text-sm leading-relaxed backdrop-blur-sm md:mt-0 md:max-w-md md:flex-1">
-              💡 {briefing.weather.tip}
-            </p>
-          </div>
+          )}
+
+          <p className="mt-5 rounded-2xl bg-white/15 p-4 text-sm leading-relaxed backdrop-blur-sm">
+            💡 {briefing.weather.tip}
+          </p>
         </article>
 
         {/* 섹션: KBO */}
@@ -156,6 +189,16 @@ export function CardNews({ briefing }: CardNewsProps) {
       </div>
     </div>
   );
+}
+
+function weatherEmoji(condition: string): string {
+  if (/맑|쾌청|화창/.test(condition)) return "☀️";
+  if (/구름|흐림/.test(condition)) return "⛅";
+  if (/비|소나기|이슬비/.test(condition)) return "🌧️";
+  if (/눈/.test(condition)) return "❄️";
+  if (/천둥|번개/.test(condition)) return "⛈️";
+  if (/안개|박무/.test(condition)) return "🌫️";
+  return "🌤️";
 }
 
 function SectionLabel({ emoji, title }: { emoji: string; title: string }) {

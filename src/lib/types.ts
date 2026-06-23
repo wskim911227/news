@@ -5,6 +5,13 @@ export interface NewsItem {
   url: string;
 }
 
+export interface HourlyWeather {
+  time: string;
+  condition: string;
+  temperature: string;
+  precipitation?: string;
+}
+
 export interface WeatherInfo {
   location: string;
   condition: string;
@@ -12,6 +19,7 @@ export interface WeatherInfo {
   high: string;
   low: string;
   tip: string;
+  hourly: HourlyWeather[];
 }
 
 export interface KboGame {
