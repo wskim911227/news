@@ -1,0 +1,11 @@
+#!/bin/sh
+# 커밋 후 origin/main으로 자동 푸시
+branch="$(git rev-parse --abbrev-ref HEAD)"
+remote="$(git remote get-url origin 2>/dev/null || true)"
+
+if [ -z "$remote" ]; then
+  exit 0
+fi
+
+echo "[auto-push] origin/$branch 으로 푸시 중..."
+git push origin "$branch" 2>&1 || echo "[auto-push] 푸시 실패 — 수동으로 git push 해주세요."
